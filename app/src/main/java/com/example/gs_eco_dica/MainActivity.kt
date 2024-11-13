@@ -12,17 +12,31 @@ import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
+import com.example.gs_eco_dica.model.EcoDicaModel
 import com.example.gs_eco_dica.viewmodel.EcoDicasViewModel
 import com.example.gs_eco_dica.viewmodel.EcoDicasViewModelFactory
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var dicaAdapter: EcoDicasAdapter
     private lateinit var viewModel: EcoDicasViewModel
     private lateinit var searchView: SearchView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        searchView = findViewById(R.id.searchView)
+        searchView.clearFocus()
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                filterList(newText ?: "")
+                return true
+            }
+        })
+
 
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
@@ -60,19 +74,6 @@ class MainActivity : AppCompatActivity() {
             showIntegrantesDialog()
         }
 
-        searchView = findViewById(R.id.searchView)
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                dicaAdapter.getFilter().filter(query)
-                return false
-            }
-
-            override fun onQueryTextChange(newText: String?): Boolean {
-                dicaAdapter.getFilter().filter(newText)
-                return false
-            }
-        })
-
         val viewModelFactory = EcoDicasViewModelFactory(application)
         viewModel = ViewModelProvider(this, viewModelFactory).get(EcoDicasViewModel::class.java)
 
@@ -80,6 +81,23 @@ class MainActivity : AppCompatActivity() {
             ecoDicasAdapter.updateEcoDicas(dicas)
         }
     }
+
+    private fun filterList(text: String) {
+        val filteredList = mutableListOf<EcoDicaModel>()
+        
+        for (item in itemList) {
+            if (item.getItemName().toLowerCase().contains(text.toLowerCase())) {
+                filteredList.add(item)
+            }
+        }
+
+        if (filteredList.isEmpty()) {
+            Toast.makeText(this, "No data found", Toast.LENGTH_SHORT).show()
+        } else {
+            // Handle the non-empty filtered list here
+        }
+    }
+
 
     private fun showIntegrantesDialog() {
         val integrantes = listOf("Vitor Tanabe RM: 93226", "Thomas Pflug RM: 92915")
