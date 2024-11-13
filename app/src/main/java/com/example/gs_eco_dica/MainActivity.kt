@@ -8,6 +8,7 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
@@ -16,7 +17,9 @@ import com.example.gs_eco_dica.viewmodel.EcoDicasViewModelFactory
 
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var dicaAdapter: EcoDicasAdapter
     private lateinit var viewModel: EcoDicasViewModel
+    private lateinit var searchView: SearchView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -25,7 +28,7 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
         supportActionBar?.title = "Eco Dicas"
 
-
+        
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
         val ecoDicasAdapter = EcoDicasAdapter { dica ->
             viewModel.removeEcoDica(dica)
@@ -57,6 +60,19 @@ class MainActivity : AppCompatActivity() {
             showIntegrantesDialog()
         }
 
+        searchView = findViewById(R.id.searchView)
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                dicaAdapter.getFilter().filter(query)
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                dicaAdapter.getFilter().filter(newText)
+                return false
+            }
+        })
+
         val viewModelFactory = EcoDicasViewModelFactory(application)
         viewModel = ViewModelProvider(this, viewModelFactory).get(EcoDicasViewModel::class.java)
 
@@ -66,7 +82,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showIntegrantesDialog() {
-        val integrantes = listOf("Vitor RM: 93226")
+        val integrantes = listOf("Vitor Tanabe RM: 93226", "Thomas Pflug RM: 92915")
 
         val builder = AlertDialog.Builder(this)
         builder.setTitle("Integrantes")
