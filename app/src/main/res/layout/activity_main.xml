@@ -51,6 +51,7 @@
         android:layout_marginEnd="16dp"
         android:text="inserir" />
 
+
     <androidx.appcompat.widget.SearchView
         android:id="@+id/searchView"
         android:layout_width="410dp"
@@ -59,6 +60,7 @@
         android:layout_marginBottom="2dp"
         android:layout_marginTop="4dp"
         android:queryHint = "Buscar dicas..."/>
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"

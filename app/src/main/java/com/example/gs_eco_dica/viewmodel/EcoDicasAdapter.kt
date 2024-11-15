@@ -14,7 +14,7 @@ import com.example.gs_eco_dica.model.EcoDicaModel
 class EcoDicasAdapter(private val onItemRemoved: (EcoDicaModel) -> Unit) :
     RecyclerView.Adapter<EcoDicasAdapter.ItemViewHolder>() {
 
-    private var items = listOf<EcoDicaModel>()
+    var items = listOf<EcoDicaModel>()
 
     inner class ItemViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
@@ -51,32 +51,13 @@ class EcoDicasAdapter(private val onItemRemoved: (EcoDicaModel) -> Unit) :
         holder.bind(item)
     }
 
-    fun getFilter(): Filter {
-        return object : Filter() {
-            override fun performFiltering(charSequence: CharSequence?): FilterResults {
-                val filteredList = if (charSequence.isNullOrEmpty()) {
-                    items // Se a busca está vazia, mostra a lista completa
-                } else {
-                    val filterPattern = charSequence.toString().lowercase().trim()
-                    items.filter { it.title.lowercase().contains(filterPattern) }
-                }
-                val results = FilterResults()
-                results.values = filteredList
-                return results
-            }
-
-            override fun publishResults(
-                charSequence: CharSequence?,
-                filterResults: FilterResults?
-            ) {
-                items = filterResults?.values as List<EcoDicaModel>
-                notifyDataSetChanged()
-            }
-        }
-    }
-
     fun updateEcoDicas(newItems: List<EcoDicaModel>) {
         items = newItems
+        notifyDataSetChanged()
+    }
+
+    fun submitList(newItems: List<EcoDicaModel>?) {
+        items = newItems ?: listOf()
         notifyDataSetChanged()
     }
 }
